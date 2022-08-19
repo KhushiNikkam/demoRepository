@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="32f27d1e-de4f-4668-a7f2-e9fe15e48cda" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="lookupfunction-demo-apiFlow" doc:id="76033b9d-f5f4-4e99-b15d-f7f2901fc3ff" >
+		<http:listener doc:name="Listener" doc:id="b6593c1b-d244-4dd7-bd60-422f8705f2dd" config-ref="HTTP_Listener_config" path="/lookup" allowedMethods="GET"/>
+		<set-payload value='#[output application/json&#10;---&#10;&#10;"Hello Everyone!"]' doc:name='"Hello Everyone!"' doc:id="0e2fe420-7786-49ac-916d-f6dbb94dcbe3" />
+		<set-variable value='#[output application/json&#10;---&#10;{&#10;	message: Mule::lookup ("lookupfunction-demo-apiFlow1", payload, 10000 ),&#10;	Status: "Success"&#10;}]' doc:name='"Sent"' doc:id="24abb5f3-0118-4b95-aa5d-fef2ad71f708" variableName="Sent"/>
+		<set-payload value="#[vars.Sent]" doc:name="Set Payload" doc:id="db80dac1-b2d3-40a5-ae3a-d87df06f22d2" />
+	</flow>
+	<flow name="lookupfunction-demo-apiFlow1" doc:id="e30973d6-fa6a-4844-b495-631983e3cc4d" >
+		<ee:transform doc:name="Transform Message" doc:id="07622e65-6123-4adf-869f-ed33a9fb27b1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ "How are you?"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
